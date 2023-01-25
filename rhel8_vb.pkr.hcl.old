@@ -1,0 +1,18 @@
+source "virtualbox-iso" "rhel8" {
+  guest_os_type = "RHEL8"
+  iso_url = "http://192.168.1.92/rhel-8.7-beta-1-x86_64-dvd.iso"
+  iso_checksum = "md5:0b601e4a2d3ee75f0f8a59e50bdac95f"
+  ssh_username = "ansible"
+  ssh_password = "ansible"
+//kickstart
+//  cd_files = ["http/ks.cfg"]
+//  cd_label = "OEMDRV"
+  boot_command = [
+          "<up><wait><tab><wait> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{ user `kickstart` }}<enter><wait5>"
+
+  shutdown_command = "echo 'ansible' | sudo -S shutdown -P now"
+}
+
+build {
+  sources = ["sources.virtualbox-iso.rhel8"]
+}
