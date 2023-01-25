@@ -1,0 +1,59 @@
+---
+
+- name: install web components
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - apache2
+    - libapache2-mod-wsgi
+  when: ansible_os_family == "Debian"
+
+- name: install web components
+  dnf: name={{item}} state=present
+  with_items:
+    - httpd
+    - mod_wsgi
+  when: ansible_os_family == "RedHat"
+
+- name: ensure mod_wsgi enabled
+  apache2_module:
+    state: present
+    name: wsgi
+  notify:
+    - restart apache2
+  when: ansible_os_family == "Debian"
+
+- name: ensure mod_wsgi enabled
+  command:  a2enmod wsgi
+  notify:
+    - restart apache2
+  when: ansible_os_family == "RedHat"
+
+- name: de-activate default apache site
+  file:
+    path: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+  notify:
+    - restart apache2
+  when: ansible_os_family == "Debian"
+
+- name: de-activate default apache site
+  command: rm -f /etc/httpd/conf.d/welcome.conf
+  notify:
+    - restart apache2
+  when: ansible_os_family == "RedHat"
+
+- name: ensure apache2 started
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+  when: ansible_os_family == "Debian"
+
+- name: ensure apache2 started
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+  when: ansible_os_family == "RedHat"
