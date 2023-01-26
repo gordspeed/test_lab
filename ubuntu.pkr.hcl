@@ -33,6 +33,7 @@ source "virtualbox-iso" "ubuntu" {
   shutdown_command        = "echo '${var.ssh_password}'|sudo -S shutdown -P now"
   ssh_username            = "${var.ssh_username}"
   ssh_password            = "${var.ssh_password}"
+  ssh_port                = "22"
   ssh_wait_timeout        = "10000s"
   guest_additions_mode    = "disable"
   vboxmanage              = [
