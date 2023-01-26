@@ -2,10 +2,8 @@
 
 source "virtualbox-iso" "ubuntu" {
   boot_command            = [
-    "<esc><esc><enter><wait>", 
-    "/install/vmlinuz noapic ", 
-    "initrd=/install/initrd.gz ", 
-    "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.preseed} ", 
+    "<enter><enter><f6><esc><wait> ",
+    "autoinstall ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/",
     "debian-installer=en_GB auto locale=en_GB kbd-chooser/method=gb ", 
     "hostname=${var.hostname} ", 
     "grub-installer/bootdev=/dev/sda<wait> ", 
