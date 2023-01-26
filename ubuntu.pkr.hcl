@@ -2,18 +2,22 @@
 
 source "virtualbox-iso" "ubuntu" {
   boot_command            = [
-    "<enter><enter><f6><esc><wait> ",
-    "autoinstall ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/",
-    "debian-installer=en_GB auto locale=en_GB kbd-chooser/method=gb ", 
-    "hostname=${var.hostname} ", 
-    "grub-installer/bootdev=/dev/sda<wait> ", 
-    "fb=false debconf/frontend=noninteractive ", 
-    "keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA ", 
-    "keyboard-configuration/variant=USA console-setup/ask_detect=false ", 
-    "passwd/user-fullname=${var.ssh_fullname} ", 
-    "passwd/user-password=${var.ssh_password} ", 
-    "passwd/user-password-again=${var.ssh_password} ", 
-    "passwd/username=${var.ssh_username} ", "-- <enter>"
+        " <wait><enter><wait>",
+        "<f6><esc>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs>",
+        "/casper/vmlinuz ",
+        "initrd=/casper/initrd ",
+        "autoinstall ",
+        "ds=nocloud-net;s=http://{{.HTTPIP}}:{{.HTTPPort}}/ubuntu-20.04/ ",
+        "<enter>"
   ]
   disk_size               = "${var.disk_size}"
   guest_os_type           = "${var.virtualbox_guest_os_type}"
