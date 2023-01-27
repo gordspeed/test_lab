@@ -101,7 +101,7 @@ variable "virtualbox_guest_os_type" {
 
 variable "vm_name" {
   type    = string
-  default = "ubuntu-18.04"
+  default = "ubuntu-2204"
 }
 
 variable "home" {
