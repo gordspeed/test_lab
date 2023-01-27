@@ -16,9 +16,9 @@ autoinstall:
     install: false
   identity:
     hostname: ubuntu
-    password: gordon
-    realname: gordon
-    username: gordon
+    password: ansible
+    realname: ansible
+    username: ansible
   kernel:
     package: linux-generic
   keyboard:
