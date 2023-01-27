@@ -1,85 +1,107 @@
 #cloud-config
 autoinstall:
-  version: 1
-  refresh-installer:  # start with an up-to-date installer
-  update: yes
-  interactive-sections:  # Install groups listed here will wait for user input
-    - storage
-  storage:  # should set the interactive default but doesn't seem to work??
-    layout:
-      name: direct
-  locale: en_US.UTF-8
+  apt:
+    disable_components: []
+    geoip: true
+    preserve_sources_list: false
+    primary:
+    - arches:
+      - amd64
+      - i386
+      uri: http://gb.archive.ubuntu.com/ubuntu
+    - arches:
+      - default
+      uri: http://ports.ubuntu.com/ubuntu-ports
+  drivers:
+    install: false
+  identity:
+    hostname: ubuntu
+    password: $6$16EBdU1hlR7q.r0.$egpBvk.Ptzf9QeXABC/.VBMgGmAhUEUHIkmmopMua7vLVbxR3m95sNnMEqkZ8WIDIkqKUFLhEAI8PEOwqtx0P/
+    realname: gordon
+    username: gordon
+  kernel:
+    package: linux-generic
   keyboard:
     layout: us
-  identity:  # This is section you may want to add to interactive-sections  (user name and password are ubuntu here)
-    hostname: puget-000
-    password: "$6$exDY1mhS4KUYCE/2$zmn9ToZwTKLhCw.b4/b.ZRTIZM30JZ4QrOQ2aOXJ8yk96xpcCof0kxKwuX1kqLG/ygbJ1f8wxED22bTL4F46P0"
-    username: ubuntu
+    toggle: null
+    variant: ''
+  locale: en_GB.UTF-8
+  network:
+    ethernets:
+      enp0s3:
+        dhcp4: true
+    version: 2
   ssh:
     allow-pw: true
+    authorized-keys: []
     install-server: true
-  apt:
-    sources:
-      ignored1:  # This is here to get the yaml formatting right when adding a ppa
-        source: ppa:graphics-drivers/ppa
-  packages: 
-    - build-essential
-    - network-manager
-    - dkms
-    - emacs-nox
-    - ubuntu-desktop-minimal
-  package_update: true
-  package_upgrade: true
-  late-commands:
-    # Changing from networkd to NetworkManager
-    # move existing config out of the way
-    - find /target/etc/netplan/ -name "*.yaml" -exec sh -c 'mv "$1" "$1-orig"' _ {} \;
-    # Create a new netplan and enable it
-    - |
-      cat <<EOF | sudo tee /target/etc/netplan/01-netcfg.yaml
-      network:
-        version: 2
-        renderer: NetworkManager
-      EOF
-    - curtin in-target --target /target netplan generate
-    - curtin in-target --target /target netplan apply
-    - curtin in-target --target /target systemctl enable NetworkManager.service
-    # Write a script that can take care of some post install setup "late-commands" cannot be interactive unfortunately"
-    # - |
-    #   cat <<EOF | sudo tee /target/etc/finish-install-setup.sh
-    #   #!/usr/bin/env bash
-    #   echo *************************
-    #   echo ****  Finish Setup   ****
-    #   echo ************************* 
-    #   echo 'Enter the hostname for this system: '
-    #   read NEW_HOSTNAME
-    #   hostnamectl set-hostname \${NEW_HOSTNAME}
-    #   echo
-    #   echo 'Enter the timezone for this system: '
-    #   echo 'America/Los_Angeles America/Denver America/Chicago America/New_York'
-    #   read NEW_TIMEZONE
-    #   timedatectl set-timezone \${NEW_TIMEZONE}
-    #   echo *************************
-    #   echo
-    #   echo *************************
-    #   echo 'Restarting to finish ...'
-    #   shutdown -r 3
-    #   EOF
-    # - curtin in-target --target /target chmod 744 /etc/finish-install-setup.sh
-    - cp /target/cdrom/extras/Puget_Systems.png /target/usr/share/backgrounds/
-  user-data: # Commands here run during first boot (cannot be interactive)
-    runcmd:
-      # Install the NVIDIA driver from the ppa we setup earlier
-      - [apt-get, update]
-      - [apt-get, dist-upgrade, --yes]
-      - [apt, autoremove, --yes]
-      - [apt-get, install, --yes,  nvidia-driver-470] #, --no-install-recommends]
-      - [sudo, -u, ubuntu, dbus-launch, gsettings, set, org.gnome.desktop.background, picture-uri, file:///usr/share/backgrounds/Puget_Systems.png]
-      # - |
-      #   #!/usr/bin/env bash
-      #   echo ''
-      #   echo '***************************************'
-      #   echo ' To complete install setup please run, '
-      #   echo ' sudo /etc/finish-install-setup.sh'
-      #   echo '***************************************'
-      #   echo ''
+  storage:
+    config:
+    - ptable: gpt
+      serial: VBOX_HARDDISK_VB35de2e0e-5b3f06b7
+      path: /dev/sda
+      wipe: superblock
+      preserve: false
+      name: ''
+      grub_device: true
+      type: disk
+      id: disk-sda
+    - device: disk-sda
+      size: 1048576
+      flag: bios_grub
+      number: 1
+      preserve: false
+      grub_device: false
+      type: partition
+      id: partition-0
+    - device: disk-sda
+      size: 1879048192
+      wipe: superblock
+      flag: ''
+      number: 2
+      preserve: false
+      grub_device: false
+      type: partition
+      id: partition-1
+    - fstype: ext4
+      volume: partition-1
+      preserve: false
+      type: format
+      id: format-0
+    - device: disk-sda
+      size: 6707740672
+      wipe: superblock
+      flag: ''
+      number: 3
+      preserve: false
+      grub_device: false
+      type: partition
+      id: partition-2
+    - name: ubuntu-vg
+      devices:
+      - partition-2
+      preserve: false
+      type: lvm_volgroup
+      id: lvm_volgroup-0
+    - name: ubuntu-lv
+      volgroup: lvm_volgroup-0
+      size: 6706692096B
+      wipe: superblock
+      preserve: false
+      type: lvm_partition
+      id: lvm_partition-0
+    - fstype: ext4
+      volume: lvm_partition-0
+      preserve: false
+      type: format
+      id: format-1
+    - path: /
+      device: format-1
+      type: mount
+      id: mount-1
+    - path: /boot
+      device: format-0
+      type: mount
+      id: mount-0
+  updates: security
+  version: 1
