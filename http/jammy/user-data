@@ -16,7 +16,7 @@ autoinstall:
     install: false
   identity:
     hostname: ubuntu
-    password: $6$16EBdU1hlR7q.r0.$egpBvk.Ptzf9QeXABC/.VBMgGmAhUEUHIkmmopMua7vLVbxR3m95sNnMEqkZ8WIDIkqKUFLhEAI8PEOwqtx0P/
+    password: gordon
     realname: gordon
     username: gordon
   kernel:
