@@ -21,9 +21,16 @@ source "docker" "ubuntu" {
 build {
   sources = ["source.docker.ubuntu"]
 
-provisioner "ansible" {
-  
-    playbook_file   = "./roles.yml"
-      }
+  provisioner "ansible" {
+    playbook_file = "roles.yml"
+    user = "root"
+    ansible_env_vars = [
+      "ANSIBLE_HOST_KEY_CHECKING=False",
+      "ANSIBLE_SSH_ARGS='-o ForwardAgent=yes -o ControlMaster=auto -o ControlPersist=60s'",
+      "ANSIBLE_NOCOLOR=True",
+      "ANSIBLE_CONNECTION=docker",
+      "ANSIBLE_REMOTE_USER=root"
+    ]
+    }
 }
 
