@@ -16,7 +16,7 @@ source "docker" "ubuntu" {
 build {
   sources = ["source.docker.ubuntu"]
 
-provisioner "ansible-local" {
+provisioner "ansible" {
     playbook_file   = "./roles.yml"
       }
 }
