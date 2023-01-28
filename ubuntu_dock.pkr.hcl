@@ -17,6 +17,17 @@ build {
   sources = ["source.docker.ubuntu"]
 
 provisioner "ansible" {
+  
     playbook_file   = "./roles.yml"
       }
+}
+
+builder {
+    type = "docker"
+    image = "ubuntu:18.04"
+    commit = true
+}
+
+provisioner "ansible" {
+    playbook_file = "roles.yml"
 }
