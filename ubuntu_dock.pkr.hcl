@@ -4,6 +4,11 @@ packer {
       version = ">= 0.0.7"
       source = "github.com/hashicorp/docker"
     }
+    ansible = {
+      version = "v1.0.3"
+      source  = "github.com/hashicorp/ansible"
+      
+    }
   }
 }
 
