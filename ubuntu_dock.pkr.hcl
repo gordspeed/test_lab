@@ -12,9 +12,11 @@ source "docker" "ubuntu" {
   commit = true
 }
 
+
 build {
-  name    = "learn-packer"
-  sources = [
-    "source.docker.ubuntu"
-  ]
+  sources = ["source.docker.ubuntu"]
+
+provisioner "ansible-local" {
+    playbook_file   = "./roles.yml"
+      }
 }
